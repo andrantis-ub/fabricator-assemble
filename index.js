@@ -559,6 +559,14 @@ var registerHelpers = function () {
 
 		// compile partial if not already compiled
 		if (!_.isFunction(template)) {
+			if (opts.data.root.toolkit.default_data) {
+				if (opts.data.root.toolkit.default_data[name]) {
+					var defOpts = opts.data.root.toolkit.default_data[name];
+					for (var key in defOpts) {
+						context[key] = Handlebars.compile(defOpts[key])();
+					}
+				}
+			}
 			fn = Handlebars.compile(template);
 		} else {
 			fn = template;
