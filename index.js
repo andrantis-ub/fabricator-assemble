@@ -563,13 +563,16 @@ var registerHelpers = function () {
 				if (opts.data.root.toolkit.default_data[name]) {
 					var defOpts = opts.data.root.toolkit.default_data[name];
 					for (var key in defOpts) {
-						context[key] = Handlebars.compile(defOpts[key])();
+						var data = defOpts[key];
+						if (typeof data === 'string') {
+							context[key] = Handlebars.compile(defOpts[key])();
+						} else {
+							context[key] = JSON.parse(Handlebars.compile(JSON.stringify(data))());
+						}
 					}
 				}
 			}
 			fn = Handlebars.compile(template);
-		} else {
-			fn = template;
 		}
 
 		// return beautified html with trailing whitespace removed
@@ -634,6 +637,7 @@ var assemble = function () {
 		var source = wrapPage(pageContent, assembly.layouts[pageMatter.data.layout || options.layout]),
 			context = buildContext(pageMatter.data),
 			template = Handlebars.compile(source);
+		context.toolkit = JSON.parse(Handlebars.compile(JSON.stringify(context.toolkit))());
 
 		// redefine file path if dest front-matter variable is defined
 		if (pageMatter.data.dest) {
