@@ -573,6 +573,8 @@ var registerHelpers = function () {
 				}
 			}
 			fn = Handlebars.compile(template);
+		} else {
+			fn = template;
 		}
 
 		// return beautified html with trailing whitespace removed
