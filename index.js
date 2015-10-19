@@ -576,7 +576,7 @@ var registerHelpers = function () {
 		}
 
 		// return beautified html with trailing whitespace removed
-		return beautifyHtml(fn(buildContext(context, opts.hash)).replace(/^\s+/, ''), options.beautifier);
+		return beautifyHtml(fn(buildContext(context, opts.hash)).replace(/^\s+/, ''), opts.beautifier);
 
 	});
 
