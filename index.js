@@ -639,8 +639,11 @@ var assemble = function () {
 		var source = wrapPage(pageContent, assembly.layouts[pageMatter.data.layout || options.layout]),
 			context = buildContext(pageMatter.data),
 			template = Handlebars.compile(source);
-		context.toolkit = JSON.parse(Handlebars.compile(JSON.stringify(context.toolkit))());
 
+		for (var key in context) {
+			context[key] = JSON.parse(Handlebars.compile(JSON.stringify(context[key]))());
+		}
+		
 		// redefine file path if dest front-matter variable is defined
 		if (pageMatter.data.dest) {
 			filePath = path.normalize(pageMatter.data.dest);
