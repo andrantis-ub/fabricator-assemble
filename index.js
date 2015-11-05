@@ -547,6 +547,7 @@ var registerHelpers = function () {
 	 * @example
 	 * {{material name context}}
 	 */
+
 	Handlebars.registerHelper(inflect.singularize(options.keys.materials), function (name, context, opts) {
 
 		// remove leading numbers from name keyword
@@ -556,22 +557,24 @@ var registerHelpers = function () {
 		// attempt to find pre-compiled partial
 		var template = Handlebars.partials[key],
 			fn;
-
-		// compile partial if not already compiled
-		if (!_.isFunction(template)) {
-			if (opts.data.root.toolkit.default_data) {
-				if (opts.data.root.toolkit.default_data[name]) {
-					var defOpts = opts.data.root.toolkit.default_data[name];
-					for (var key in defOpts) {
-						var data = defOpts[key];
-						if (typeof data === 'string') {
-							context[key] = Handlebars.compile(defOpts[key])();
-						} else {
-							context[key] = JSON.parse(Handlebars.compile(JSON.stringify(data))());
-						}
+		// check if default data exists for partial and apply it
+		if (opts.data.root.toolkit.default_data) {
+			if (opts.data.root.toolkit.default_data[name]) {
+				var defOpts = opts.data.root.toolkit.default_data[name];
+				for (var key in defOpts) {
+					var data = defOpts[key];
+					if (typeof data === 'string') {
+						context[key] = Handlebars.compile(defOpts[key])();
+					} else {
+						var newData = JSON.parse(Handlebars.compile(JSON.stringify(data))());
+						context[key] = newData;
 					}
 				}
 			}
+		}
+
+		// compile partial if not already compiled
+		if (!_.isFunction(template)) {
 			fn = Handlebars.compile(template);
 		} else {
 			fn = template;
@@ -641,7 +644,8 @@ var assemble = function () {
 			template = Handlebars.compile(source);
 
 		for (var key in context) {
-			context[key] = JSON.parse(Handlebars.compile(JSON.stringify(context[key]))());
+			var newData = JSON.parse(Handlebars.compile(JSON.stringify(context[key]))());
+			context[key] = newData;
 		}
 		
 		// redefine file path if dest front-matter variable is defined
