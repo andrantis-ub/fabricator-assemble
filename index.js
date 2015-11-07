@@ -287,13 +287,13 @@ var parseMaterials = function () {
 
 	// stub out an object for each collection and subCollection
 	files.forEach(function (file) {
-
 		var parent = getName(path.normalize(path.dirname(file)).split(path.sep).slice(-2, -1)[0], true);
 		var collection = getName(path.normalize(path.dirname(file)).split(path.sep).pop(), true);
 		var isSubCollection = (dirs.indexOf(parent) > -1);
 
 		// get the material base dir for stubbing out the base object for each category (e.g. component, structure)
 		var materialBase = (isSubCollection) ? parent : collection;
+
 
 		// stub the base object
 		assembly.materials[materialBase] = assembly.materials[materialBase] || {
@@ -488,21 +488,23 @@ var parseViews = function () {
 		var fileMatter = getMatter(file),
 			fileData = _.omit(fileMatter.data, 'notes');
 
-		// if this file is part of a collection
-		if (collection) {
+		if (!fileMatter.data.ignore) {
+			// if this file is part of a collection
+			if (collection) {
 
-			// create collection if it doesn't exist
-			assembly.views[collection] = assembly.views[collection] || {
-				name: toTitleCase(collection),
-				items: {}
-			};
+				// create collection if it doesn't exist
+				assembly.views[collection] = assembly.views[collection] || {
+					name: toTitleCase(collection),
+					items: {}
+				};
 
-			// store view data
-			assembly.views[collection].items[id] = {
-				name: toTitleCase(id),
-				data: fileData
-			};
+				// store view data
+				assembly.views[collection].items[id] = {
+					name: toTitleCase(id),
+					data: fileData
+				};
 
+			}
 		}
 
 	});
