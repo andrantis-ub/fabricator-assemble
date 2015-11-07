@@ -328,25 +328,26 @@ var parseMaterials = function () {
 		// trim whitespace from material content
 		var content = fileMatter.content.replace(/^(\s*(\r?\n|\r))+|(\s*(\r?\n|\r))+$/g, '');
 
+		if (!localData.ignore) {
+			// capture meta data for the material
+			if (!isSubCollection) {
+				assembly.materials[collection].items[key] = {
+					name: toTitleCase(id),
+					notes: (fileMatter.data.notes) ? md.render(fileMatter.data.notes) : '',
+					data: localData
+				};
+			} else {
+				assembly.materials[parent].items[collection].items[key] = {
+					name: toTitleCase(id.split('.')[1]),
+					notes: (fileMatter.data.notes) ? md.render(fileMatter.data.notes) : '',
+					data: localData
+				};
+			}
 
-		// capture meta data for the material
-		if (!isSubCollection) {
-			assembly.materials[collection].items[key] = {
-				name: toTitleCase(id),
-				notes: (fileMatter.data.notes) ? md.render(fileMatter.data.notes) : '',
-				data: localData
-			};
-		} else {
-			assembly.materials[parent].items[collection].items[key] = {
-				name: toTitleCase(id.split('.')[1]),
-				notes: (fileMatter.data.notes) ? md.render(fileMatter.data.notes) : '',
-				data: localData
-			};
+
+			// store material-name-spaced local data in template context
+			assembly.materialData[id.replace(/\./g, '-')] = localData;
 		}
-
-
-		// store material-name-spaced local data in template context
-		assembly.materialData[id.replace(/\./g, '-')] = localData;
 
 
 		// replace local fields on the fly with name-spaced keys
