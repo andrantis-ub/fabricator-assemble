@@ -438,7 +438,8 @@ var parseLayoutIncludes = function () {
 	// save content of each file
 	files.forEach(function (file) {
 		var id = getName(file);
-		var content = fs.readFileSync(file, 'utf-8');
+		var rawContent = fs.readFileSync(file, 'utf-8');
+		var content = matter(rawContent).content;
 		Handlebars.registerPartial(id, content);
 	});
 
